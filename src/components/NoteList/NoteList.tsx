@@ -9,6 +9,7 @@ import Checkbox from 'material-ui/Checkbox';
 import Subheader from 'material-ui/Subheader';
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import ActionHome from 'material-ui/svg-icons/action/home';
+import { menuListItem } from './menus';
 
 export type NoteListType = {
   key?: number,
@@ -16,7 +17,7 @@ export type NoteListType = {
   style?: React.CSSProperties,
   title: string,
   date: string,
-  values: {item: string, description?: string}[],
+  values: string[],
   onChange?: (type: string, value: any) => {}
 }
 
@@ -50,11 +51,12 @@ export class NoteList extends React.Component <NoteListType, any > {
         <CardText expandable={true}>
           <List>
             {
-              this.props.values.map( (value, index) =>
+              this.props.values.map( (value, index: number) =>
                 <ListItem
                   key = {index}
                   leftCheckbox={<Checkbox />}
-                  primaryText={value.item}
+                  primaryText={value}
+                  rightIconButton={menuListItem(index, this.removeItem.bind(this))}
                 />
               )
             }
@@ -93,6 +95,10 @@ export class NoteList extends React.Component <NoteListType, any > {
       nextItem: event.target.value,
     });
   };
+
+  removeItem = (id: number) => {
+    this.props.onChange('removeItem', { index: this.props.title, elementIndex: id })    
+  }
 
   private saveNewItem () {
     this.props.onChange('newItem', { id: this.props.title, item: this.state.nextItem })

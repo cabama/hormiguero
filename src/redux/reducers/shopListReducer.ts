@@ -4,25 +4,35 @@ import { shopListType, shopList } from '../store/shopListStore';
 
 export const shopListTypes = {
   addItem: 'ADD_ITEM',
-  setVisibility: 'DRAWABLE_SET_VISIBILITY'
+  removeItem: 'REMOVE_ITEM'
 }
 
 export const ShopListReducer = (state: shopListType[] = shopList, action: any) => {
+
+  const listaCompra = state.slice(0)
+
   switch (action.type) {
 
     case shopListTypes.addItem:
-      const listaCompra = state.slice(0)
       const id = action.id
       const newitem = action.item
-
       listaCompra.forEach((item, index) => {
         if (item.title === id) {
-          debugger
-          listaCompra[index].lista.push({item: String(newitem), description: ''})
+          listaCompra[index].list.push(newitem)
         }
       })
-      debugger
       return listaCompra
+
+    case shopListTypes.removeItem:
+      listaCompra.forEach((item, index) => {
+        if (item.title === action.index) {
+          debugger
+          item.list.splice(action.elementIndex, 1)
+        }
+      })
+      return listaCompra
+
+
 
     default:
       return state

@@ -2,7 +2,7 @@ import * as React from "react";
 
 // Redux Setup
 import { connect } from 'react-redux';
-import { AppStore, defaultStore, ListaCompraType } from '../../redux/store/defaultStore';
+import { AppStore, defaultStore } from '../../redux/store/defaultStore';
 
 // Material Components
 import { List, ListItem } from 'material-ui/List';
@@ -16,15 +16,11 @@ import ActionHome from 'material-ui/svg-icons/action/home';
 // Components
 import { NoteList } from '../../components/NoteList/NoteList';
 
-// Import Local Style
-// import * as s from './style.less';
-
 // Adapter for fetch
 import analyticsRequest from '../../adapters/analyticsRequest'
 import { colors } from "material-ui/styles";
-import { shopList } from '../../redux/store/shopListStore';
+import { shopList, shopListType } from '../../redux/store/shopListStore';
 import { ShopListReducer, shopListTypes } from '../../redux/reducers/shopListReducer';
-
 
 const divStyle = {
   margin: '10px 0',
@@ -35,11 +31,10 @@ type PropsCompra =
   ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>
 
-
 export class CompraPage extends React.Component<PropsCompra, {}> {
 
   private nextItem: string = ""
-  private listaCompra: ListaCompraType[]
+  private listaCompra: shopListType[]
 
   constructor(props: PropsCompra, state: AppStore) {
     super(props, state);
@@ -50,31 +45,39 @@ export class CompraPage extends React.Component<PropsCompra, {}> {
     alert('Blasa')
   })
 
-
   render() {
     return (
-      <div>
-        <div className="container">
-          { 
-            this.listaCompra.map( (value, index) => 
-              <NoteList
-                key={index}
-                className='col-12 col-md-6'
-                style={divStyle}
-                title={value.title}
-                date={value.date}
-                values={value.lista}
-                onChange={this.onChange.bind(this)}
-              />
-            )
-          }
-        </div>
+      <div className="container">
+        { 
+          this.listaCompra.map( (value, index) => 
+            <NoteList
+              key={index}
+              className='col-12 col-md-6'
+              style={divStyle}
+              title={value.title}
+              date={value.date}
+              values={value.list}
+              onChange={this.onChange.bind(this)}
+            />
+          )
+        }
       </div>
     )
   }
 
   private onChange = (type: string, value: any) => {
-    this.props.dispatch({ type: shopListTypes.addItem , ...value})
+    switch (type) {
+      case 'removeItem':
+        this.props.dispatch({ type: shopListTypes.removeItem, ...value })
+        break
+
+      case 'newItem':
+        this.props.dispatch({ type: shopListTypes.addItem, ...value })
+        break
+    
+      default:
+        break;
+    }
   }
 
 }
